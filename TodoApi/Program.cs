@@ -9,9 +9,9 @@ builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.AllowAnyOrigin()   
+        policy.WithOrigins("https://todoapplication-20pz.onrender.com")
               .AllowAnyMethod()   
               .AllowAnyHeader(); 
     });
@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
-app.UseCors();
+app.UseCors("CorsPolicy");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -44,8 +44,8 @@ app.MapPut("/items/{id}", async (ToDoDbContext db,int id ,Item item)=>
     if (item1 is null)
          return Results.NotFound();
     
-    item1.Name = item.Name;
-    item1.IsComplete = item.IsComplete;
+    //item1.Name = item.Name;
+    item1.IsComplete = item.IsComplete;//!!!
     await db.SaveChangesAsync();
 
     return Results.NoContent();
@@ -65,10 +65,6 @@ app.MapDelete("/items/{id}", async (ToDoDbContext db, int id) =>
 
 // app.MapMethods("/options-or-head", new[] { "OPTIONS", "HEAD" }, 
 //                           () => "This is an options or head request ");
-
-
-
-
 app.Run();
 
 
