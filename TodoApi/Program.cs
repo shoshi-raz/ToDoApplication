@@ -11,7 +11,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.WithOrigins("https://todoapplication-20pz.onrender.com")
+        policy.AllowAnyOrigin()
               .AllowAnyMethod()   
               .AllowAnyHeader(); 
     });
@@ -66,6 +66,7 @@ app.MapDelete("/items/{id}", async (ToDoDbContext db, int id) =>
 
 // app.MapMethods("/options-or-head", new[] { "OPTIONS", "HEAD" }, 
 //                           () => "This is an options or head request ");
+app.MapGet("/check", () => "Server is Running and CORS is OK!");
 app.Run();
 
 
