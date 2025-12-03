@@ -1,20 +1,18 @@
-console.log("--------------------bjhbl-----------------");
 require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 
 const app = express();
-
 app.use(express.json());
 
+// ✅ GET /services - מחזיר את רשימת השירותים מ-Render
 app.get('/services', async (req, res) => {
   try {
-    console.log("לפני");
-
     const apiKey = process.env.RENDER_API_KEY;
 
-    console.log("after");
-    console.log("API Key length:", apiKey ? apiKey.length : "NOT FOUND");
+    if (!apiKey) {
+      return res.status(400).json({ error: 'RENDER_API_KEY not set' });
+    }
 
     const response = await axios.get("https://api.render.com/v1/services", {
       headers: {
@@ -26,7 +24,7 @@ app.get('/services', async (req, res) => {
     res.json(response.data);
 
   } catch (err) {
-    res.json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
