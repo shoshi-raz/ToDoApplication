@@ -11,9 +11,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()   
-              .AllowAnyHeader(); 
+        policy.WithOrigins("https://todoapplication-20pz.onrender.com",
+                "https://todoapplicationapi.onrender.com")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
@@ -23,14 +25,15 @@ app.UseCors("CorsPolicy");
 
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-//}
-
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.RoutePrefix = string.Empty;
+});//}
+app.MapGet("/", () => "✅ API is running! Open Swagger UI above.");
 app.MapGet("/items", async (ToDoDbContext db) =>
     await db.Items.ToListAsync());
 
-app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.MapPost("/items", async (ToDoDbContext db, Item item) =>
 {
@@ -39,19 +42,19 @@ app.MapPost("/items", async (ToDoDbContext db, Item item) =>
     return Results.Created($"/items/{item.Id}", item);
 });
 
-app.MapPut("/items/{id}", async (ToDoDbContext db,int id ,Item item)=>
+app.MapPut("/items/{id}", async (ToDoDbContext db, int id, Item item) =>
 {
-    Item? item1 = await db.Items.FindAsync(id) ;
+    Item? item1 = await db.Items.FindAsync(id);
     if (item1 is null)
-         return Results.NotFound();
-    
+        return Results.NotFound();
+
     //item1.Name = item.Name;
     item1.IsComplete = item.IsComplete;//!!!
     await db.SaveChangesAsync();
 
     return Results.NoContent();
 
-} );
+});
 app.MapDelete("/items/{id}", async (ToDoDbContext db, int id) =>
 {
     var item = await db.Items.FindAsync(id);
