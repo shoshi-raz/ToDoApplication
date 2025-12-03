@@ -20,11 +20,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 app.UseCors("CorsPolicy");
-if (app.Environment.IsDevelopment())
-{
+
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.MapGet("/items", async (ToDoDbContext db) =>
     await db.Items.ToListAsync());
