@@ -56,7 +56,7 @@ app.get('/services', async (req, res) => {
       return res.status(400).json({ error: 'RENDER_API_KEY not set' });
     }
 
-    const response = await axios.get("https://api.render.com/v1/services", {
+    const response = await axios.get("https://api.render.com/services", {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         Accept: "application/json"
