@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>רשימת השירותים ב-Render</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .service-box {
+            background: #eef2ff;
+            border: 1px solid #cdd4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .service-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2a2a72;
+        }
+        .label {
+            font-weight: bold;
+            color: #444;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 3px 6px;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>רשימת השירותים שלך ב-Render</h1>
+
+    <div class="container" id="services"></div>
+
+    <script>
+        async function loadServices() {
+            try {
+                const res = await fetch("/services");
+                const data = await res.json();
+
+                const container = document.getElementById("services");
+                container.innerHTML = "";
+
+                data.forEach(item => {
+                    const s = item.service;
+                    const box = document.createElement("div");
+                    box.className = "service-box";
+
+                    box.innerHTML = `
+                        <div class="service-title">${s.name}</div>
+                        <div><span class="label">סוג:</span> ${s.type}</div>
+                        <div><span class="label">סטטוס:</span> ${s.suspended}</div>
+                        <div><span class="label">URL:</span> <a href="${s.serviceDetails.url}" target="_blank">${s.serviceDetails.url}</a></div>
+                        <div><span class="label">Branch:</span> ${s.branch}</div>
+                        <div><span class="label">Plan:</span> ${s.serviceDetails.plan}</div>
+                        <div><span class="label">Build Command:</span> <code>${s.serviceDetails.envSpecificDetails?.buildCommand || "—"}</code></div>
+                        <div><span class="label">Start Command:</span> <code>${s.serviceDetails.envSpecificDetails?.startCommand || "—"}</code></div>
+                        <br>
+                        <div><span class="label">עוד מידע:</span> <a href="${s.dashboardUrl}" target="_blank">לוח הבקרה</a></div>
+                    `;
+
+                    container.appendChild(box);
+                });
+
+            } catch (err) {
+                document.getElementById("services").innerHTML = 
+                    "<p style='color:red'>שגיאה בטעינת המידע.</p>";
+            }
+        }
+
+        loadServices();
+    </script>
+
+    <div class="footer">
+        מסך תצוגה אוטומטי לשירותי Render  
+    </div>
+
+</body>
+</html>
