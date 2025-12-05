@@ -4,6 +4,7 @@ const axios = require('axios');
 
 const app = express();
 app.use(express.json());
+app.use(express.static("public"));
 
 // ✅ GET /services – מחזיר את רשימת השירותים בחשבון Render
 app.get('/services', async (req, res) => {
