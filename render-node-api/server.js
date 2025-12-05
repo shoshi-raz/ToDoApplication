@@ -6,6 +6,10 @@ const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 
+app.get('/services-page', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'services.html'));
+});
+
 // ✅ GET /services – מחזיר את רשימת השירותים בחשבון Render
 app.get('/services', async (req, res) => {
   try {
